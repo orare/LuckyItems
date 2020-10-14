@@ -3,18 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrareItems", "OrareItems\OrareItems.csproj", "{2B2B6382-9D21-4DC4-9B1C-6CD3020D3E33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LuckyItems", "OrareItems\LuckyItems.csproj", "{2B2B6382-9D21-4DC4-9B1C-6CD3020D3E33}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		RoR2 Dev Profile (Debug)|Any CPU = RoR2 Dev Profile (Debug)|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{2B2B6382-9D21-4DC4-9B1C-6CD3020D3E33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2B2B6382-9D21-4DC4-9B1C-6CD3020D3E33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B2B6382-9D21-4DC4-9B1C-6CD3020D3E33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B2B6382-9D21-4DC4-9B1C-6CD3020D3E33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B2B6382-9D21-4DC4-9B1C-6CD3020D3E33}.RoR2 Dev Profile (Debug)|Any CPU.ActiveCfg = RoR2 Dev Profile (Debug)|Any CPU
+		{2B2B6382-9D21-4DC4-9B1C-6CD3020D3E33}.RoR2 Dev Profile (Debug)|Any CPU.Build.0 = RoR2 Dev Profile (Debug)|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
