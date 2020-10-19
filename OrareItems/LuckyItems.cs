@@ -5,9 +5,7 @@ using R2API.Utils;
 using RoR2;
 using UnityEngine;
 using System.Reflection;
-using R2API.AssetPlus;
 using LuckyItems.Items;
-using BepInEx.Configuration;
 
 namespace LuckyItems
 {
@@ -18,7 +16,7 @@ namespace LuckyItems
 
     public class LuckyItems : BaseUnityPlugin
     {
-        const string ModVersion = "0.0.6";
+        const string ModVersion = "1.0.0";
         const string ModName = "Lucky Items";
         const string ModGuid = "mod.orare.luckyitems";
 
