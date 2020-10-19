@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using ItemStats;
+using ItemStats.Stat;
+using ItemStats.ValueFormatters;
 using R2API;
 using R2API.Utils;
 using RoR2;
@@ -13,8 +16,6 @@ namespace LuckyItems.Items
     {
         private static GameObject ExtraShrineRollPrefab;
         private static ItemIndex ExtraShrineRollItemIndex;
-
-        private static float ExtraShrineRollChance = 15f;
 
         public static void Init()
         {
@@ -42,7 +43,8 @@ namespace LuckyItems.Items
                 var inv = characterBody.inventory;
                 if(inv)
                 {
-                    if (inv.GetItemCount(ExtraShrineRollItemIndex) > 0 && Util.CheckRoll(ExtraShrineRollChance * inv.GetItemCount(ExtraShrineRollItemIndex), characterBody.master))
+                    Chat.AddMessage($"{LuckyItems.configInitialStackChance.Value + LuckyItems.configAdditionalStackChance.Value * (inv.GetItemCount(ExtraShrineRollItemIndex) - 1)}");
+                    if (inv.GetItemCount(ExtraShrineRollItemIndex) > 0 && Util.CheckRoll(LuckyItems.configInitialStackChance.Value + LuckyItems.configAdditionalStackChance.Value * (inv.GetItemCount(ExtraShrineRollItemIndex) - 1), characterBody.master))
                     {
                         Xoroshiro128Plus rng = new Xoroshiro128Plus(Run.instance.treasureRng.nextUlong);
                         PickupIndex none = PickupIndex.none;
@@ -60,11 +62,11 @@ namespace LuckyItems.Items
                         bool flag = pickupIndex == PickupIndex.none;
                         if (flag)
                         {
-                            Chat.AddMessage("EXTRA ROLL FAIL");
+                            Chat.AddMessage("Lucky Default Sphere has rolled the shrine an additional time for: Nothing.");
                         }
                         else
                         {
-                            Chat.AddMessage("EXTRA ROLL SUCCESS. GAINED: " + pickupIndex.ToString());
+                            Chat.AddMessage($"Lucky Default Sphere has rolled the shrine an additional time for: {ItemCatalog.GetItemDef(PickupCatalog.GetPickupDef(pickupIndex).itemIndex).name}");
                             PickupDropletController.CreatePickupDroplet(pickupIndex, self.dropletOrigin.position, self.dropletOrigin.forward * 20f);
                         }
                     }
@@ -82,14 +84,14 @@ namespace LuckyItems.Items
                 var inv = characterBody.inventory;
                 if (inv)
                 {
-                    if (inv.GetItemCount(ExtraShrineRollItemIndex) > 0 && Util.CheckRoll(ExtraShrineRollChance * inv.GetItemCount(ExtraShrineRollItemIndex), characterBody.master))
+                    if (inv.GetItemCount(ExtraShrineRollItemIndex) > 0 && Util.CheckRoll(LuckyItems.configInitialStackChance.Value + LuckyItems.configAdditionalStackChance.Value * (inv.GetItemCount(ExtraShrineRollItemIndex) - 1), characterBody.master))
                     {
                         var purchaseInteraction = self.GetFieldValue<PurchaseInteraction>("purchaseInteraction");
                         uint amount = (uint)(characterBody.healthComponent.fullCombinedHealth * (float)purchaseInteraction.cost / 100f * self.goldToPaidHpRatio);
                         if (characterBody.master)
                         {
                             characterBody.master.GiveMoney(amount);
-                            Chat.AddMessage("EXTRA BLOOD SHRINE MONEY: " + amount.ToString());
+                            Chat.AddMessage($"Lucky Default Sphere has given you an additonal {amount} gold.");
                         }
                     }
                 }
@@ -106,7 +108,7 @@ namespace LuckyItems.Items
                 var inv = characterBody.inventory;
                 if (inv)
                 {
-                    if (inv.GetItemCount(ExtraShrineRollItemIndex) > 0 && Util.CheckRoll(ExtraShrineRollChance * inv.GetItemCount(ExtraShrineRollItemIndex), characterBody.master))
+                    if (inv.GetItemCount(ExtraShrineRollItemIndex) > 0 && Util.CheckRoll(LuckyItems.configInitialStackChance.Value + LuckyItems.configAdditionalStackChance.Value * (inv.GetItemCount(ExtraShrineRollItemIndex) - 1), characterBody.master))
                     {
                         GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/NetworkedObjects/Encounters/MonstersOnShrineUseEncounter"), self.transform.position, Quaternion.identity);
                         UnityEngine.Networking.NetworkServer.Spawn(gameObject);
@@ -115,7 +117,7 @@ namespace LuckyItems.Items
                         DirectorCard directorCard = combarDirector.SelectMonsterCardForCombatShrine(monsterCredit);
                         if (directorCard != null)
                         {
-                            Chat.AddMessage("Spawned an additional set of combat shrine monsters.");
+                            Chat.AddMessage("Lucky Default Sphere has spawned an additional set of combat shrine monsters.");
                             combarDirector.CombatShrineActivation(interactor, monsterCredit, directorCard);
                             return;
                         }
@@ -134,12 +136,12 @@ namespace LuckyItems.Items
                 var inv = characterBody.inventory;
                 if (inv)
                 {
-                    if (inv.GetItemCount(ExtraShrineRollItemIndex) > 0 && Util.CheckRoll(ExtraShrineRollChance * inv.GetItemCount(ExtraShrineRollItemIndex), characterBody.master))
+                    if (inv.GetItemCount(ExtraShrineRollItemIndex) > 0 && Util.CheckRoll(LuckyItems.configInitialStackChance.Value + LuckyItems.configAdditionalStackChance.Value * (inv.GetItemCount(ExtraShrineRollItemIndex) - 1), characterBody.master))
                     {
                         if(TeleporterInteraction.instance)
                         {
                             TeleporterInteraction.instance.AddShrineStack();
-                            Chat.AddMessage("Added Extra Boss Shrine");
+                            Chat.AddMessage("Lucky Default Sphere has added an extra teleporter boss.");
                         }
                     }
                 }
@@ -156,13 +158,13 @@ namespace LuckyItems.Items
                 var inv = characterBody.inventory;
                 if (inv)
                 {
-                    if (inv.GetItemCount(ExtraShrineRollItemIndex) > 0 && Util.CheckRoll(ExtraShrineRollChance * inv.GetItemCount(ExtraShrineRollItemIndex), characterBody.master))
+                    if (inv.GetItemCount(ExtraShrineRollItemIndex) > 0 && Util.CheckRoll(LuckyItems.configInitialStackChance.Value + LuckyItems.configAdditionalStackChance.Value * (inv.GetItemCount(ExtraShrineRollItemIndex) - 1), characterBody.master))
                     {
                         self.InvokeMethod("SetWardEnabled", true);
                         var healingWard = self.GetFieldValue<HealingWard>("healingWard");
                         float networkradius = self.baseRadius += self.radiusBonusPerPurchase;
                         healingWard.Networkradius = networkradius;
-                        Chat.AddMessage("Healing Shrine Increased");
+                        Chat.AddMessage("Lucky Default Sphere has increased the healing shrine range an additonal time.");
 
                     }
                 }
@@ -187,12 +189,7 @@ namespace LuckyItems.Items
                 }
             };
 
-            ItemDisplayRule[] itemDisplayRules = new ItemDisplayRule[1]; // keep this null if you don't want the item to show up on the survivor 3d model. You can also have multiple rules !
-            itemDisplayRules[0].followerPrefab = ExtraShrineRollPrefab; // the prefab that will show up on the survivor
-            itemDisplayRules[0].childName = "Chest"; // this will define the starting point for the position of the 3d model, you can see what are the differents name available in the prefab model of the survivors
-            itemDisplayRules[0].localScale = new Vector3(0.15f, 0.15f, 0.15f); // scale the model
-            itemDisplayRules[0].localAngles = new Vector3(0f, 180f, 0f); // rotate the model
-            itemDisplayRules[0].localPos = new Vector3(-0.35f, -0.1f, 0f); // position offset relative to the childName, here the survivor Chest
+            ItemDisplayRule[] itemDisplayRules = new ItemDisplayRule[0];
 
             var extraShrineRoll = new R2API.CustomItem(ExtraShrineRollItemDef, itemDisplayRules);
 
@@ -202,13 +199,32 @@ namespace LuckyItems.Items
 
         private static void AddLanguageTokens()
         {
-            R2API.LanguageAPI.Add("EXTRASHRINEROLL_NAME", "Two For One");
+            R2API.LanguageAPI.Add("EXTRASHRINEROLL_NAME", "Lucky Default Sphere");
             R2API.LanguageAPI.Add("EXTRASHRINEROLL_PICKUP", "Chance to gain an extra roll on shrine use.");
             R2API.LanguageAPI.Add("EXTRASHRINEROLL_DESC",
-                "Shrines have a <style=cIsUtility>15%</style> <style=cStack>(+15% per stack)</style>chance to roll a second time at no additonal cost.");
+                $"Shrines have a <style=cIsUtility>{LuckyItems.configInitialStackChance.Value}%</style> <style=cStack>(+{LuckyItems.configAdditionalStackChance.Value}% per stack)</style>chance to roll a second time at no additonal cost.");
             R2API.LanguageAPI.Add("EXTRASHRINEROLL_LORE",
-                "deepest lore.");
+                "This item has has a dark, secret past.");
         }
+
+        public static void AddItemStatsModDef()
+        {
+
+            ItemStatDef statDef = new ItemStatDef
+            {
+                Stats = new List<ItemStat>
+                {
+                    new ItemStat(
+                    (itemCount, ctx) => LuckyItems.configInitialStackChance.Value + (itemCount-1) * LuckyItems.configAdditionalStackChance.Value,
+                    (value, ctx) => $"Chance Proc: {value.FormatPercentage(maxValue:1f)}"
+                    )
+                }
+            };
+            ItemStatsMod.AddCustomItemStatDef(ExtraShrineRollItemIndex, statDef);
+
+
+        }
+
     }
 
 }
