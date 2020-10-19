@@ -46,9 +46,6 @@
     <Reference Include="HGUnityUtils">
       <HintPath>..\..\RoR Files\Libs\HGUnityUtils.dll</HintPath>
     </Reference>
-    <Reference Include="ItemStats">
-      <HintPath>..\..\RoR Files\Libs\ItemStatsMod\ItemStatsMod.dll</HintPath>
-    </Reference>
     <Reference Include="KdTreeLib">
       <HintPath>..\..\RoR Files\Libs\KdTreeLib.dll</HintPath>
     </Reference>

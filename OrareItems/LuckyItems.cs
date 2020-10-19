@@ -13,7 +13,6 @@ namespace LuckyItems
 {
     [BepInPlugin(ModGuid, ModName, ModVersion)]
     [BepInDependency("com.bepis.r2api")]
-    [BepInDependency("dev.ontrigger.itemstats", BepInDependency.DependencyFlags.SoftDependency)]
     [R2APISubmoduleDependency(nameof(ItemAPI), nameof(ItemDropAPI), nameof(ResourcesAPI), nameof(LanguageAPI))]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
 
@@ -26,13 +25,9 @@ namespace LuckyItems
         public static AssetBundle bundle;
         public static string ModPrefix = "@LuckyItems:";
 
-        public static ConfigEntry<float> configInitialStackChance;
-        public static ConfigEntry<float> configAdditionalStackChance;
 
         public void Awake()
         {
-            configInitialStackChance = Config.Bind("General Settings", "Initial Chance", 15f, "The chance % the inital item gives.");
-            configAdditionalStackChance = Config.Bind("General Settings", "Additional Chance", 15f, "The amount of % chance subsequent stacks give.");
 
             using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("LuckyItems.itemassets"))
             {
@@ -42,8 +37,6 @@ namespace LuckyItems
             }
 
             ExtraShrineRoll.Init();
-            if (BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("dev.ontrigger.itemstats"))
-                ExtraShrineRoll.AddItemStatsModDef();
         }
     }
 }
