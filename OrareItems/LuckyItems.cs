@@ -11,12 +11,16 @@ namespace LuckyItems
 {
     [BepInPlugin(ModGuid, ModName, ModVersion)]
     [BepInDependency("com.bepis.r2api")]
-    [R2APISubmoduleDependency(nameof(ItemAPI), nameof(ItemDropAPI), nameof(ResourcesAPI), nameof(LanguageAPI))]
+    [R2APISubmoduleDependency(nameof(ItemAPI), nameof(ItemDropAPI), nameof(ResourcesAPI), nameof(LanguageAPI), nameof(InventoryAPI))]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
 
     public class LuckyItems : BaseUnityPlugin
     {
-        const string ModVersion = "1.0.0";
+        #if DEBUG
+            const string ModVersion = "1.0.0.2";
+        #else
+            const string ModVersion = "1.0.0";
+        #endif
         const string ModName = "Lucky Items";
         const string ModGuid = "mod.orare.luckyitems";
 
@@ -35,6 +39,7 @@ namespace LuckyItems
             }
 
             ExtraShrineRoll.Init();
+            ExtraItemPickup.Init();
         }
     }
 }
