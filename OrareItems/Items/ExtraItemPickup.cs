@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using R2API;
 using R2API.Utils;
@@ -13,7 +14,7 @@ namespace LuckyItems.Items
 
         private static GameObject ExtraItemPickupPrefab;
         private static ItemIndex ExtraItemPickupItemIndex;
-
+        private static float ItemProcChance = 50f;
         public static void Init()
         {
             ExtraItemPickupPrefab = LuckyItems.bundle.LoadAsset<GameObject>("Assets/Items/OnPickupItem/pickup_item.prefab");
@@ -27,7 +28,73 @@ namespace LuckyItems.Items
         private static void NotificationQueue_OnItemPickup(On.RoR2.UI.NotificationQueue.orig_OnItemPickup orig, RoR2.UI.NotificationQueue self, CharacterMaster characterMaster, ItemIndex itemIndex)
         {
             orig(self, characterMaster, itemIndex);
-            Chat.AddMessage("ITEM PICKUP");
+            ItemTier itemTier = ItemTier.NoTier;
+            if(characterMaster && characterMaster.inventory)
+            {
+                int itemCount = characterMaster.inventory.GetItemCount(ExtraItemPickupItemIndex);
+                if(itemCount > 0 && Util.CheckRoll(ItemProcChance , characterMaster))
+                {
+                    itemTier = SelectItemTier(characterMaster.inventory);
+                    if (itemTier == ItemTier.NoTier)
+                        return;
+
+                    List<ItemIndex> currentItems = characterMaster.inventory.itemAcquisitionOrder;
+                    ItemIndex itemIndexSelection = SelectItemFromTier(currentItems, itemTier);
+                    if (itemIndexSelection == ItemIndex.None)
+                        return;
+                    var item = ItemCatalog.GetItemDef(itemIndexSelection);
+
+                    characterMaster.inventory.GiveItem(itemIndexSelection);
+
+                    Chat.AddMessage($"+1 to: {Language.GetString(item.nameToken)}");
+                }
+            }
+        }
+
+        private static ItemTier SelectItemTier(Inventory inv)
+        {
+            int itemCount = inv.GetItemCount(ExtraItemPickupItemIndex);
+            ItemTier itemTier = ItemTier.NoTier;
+            var tier1Chance = 0.8f;
+            var tier2Chance = 0.2f;
+            var tier3Chance = 0.01f;
+            if (itemCount > 0)
+            {
+                tier2Chance *= itemCount;
+                tier3Chance *= Mathf.Pow(itemCount, 2f);
+                WeightedSelection<ItemTier> weightedSelection = new WeightedSelection<ItemTier>(8);
+                if (inv.GetTotalItemCountOfTier(ItemTier.Tier1) > 0)
+                    weightedSelection.AddChoice(ItemTier.Tier1, tier1Chance);
+                if (inv.GetTotalItemCountOfTier(ItemTier.Tier2) > 0)
+                    weightedSelection.AddChoice(ItemTier.Tier2, tier2Chance);
+                if (inv.GetTotalItemCountOfTier(ItemTier.Tier3) > 0)
+                    weightedSelection.AddChoice(ItemTier.Tier3, tier3Chance);
+                itemTier = weightedSelection.Evaluate(Run.instance.treasureRng.nextNormalizedFloat);
+            }
+            return itemTier;
+        }
+
+        private static ItemIndex SelectItemFromTier(List<ItemIndex> itemIndexs, ItemTier itemTier)
+        {
+            List<ItemIndex> tieredItems = new List<ItemIndex>();
+            var itemIndex = ItemIndex.None;
+            foreach (var item in itemIndexs)
+            {
+                var itemDef = ItemCatalog.GetItemDef(item);
+                if(itemDef.tier == itemTier)
+                {
+                    tieredItems.Add(item);
+                }
+            }
+            if(tieredItems.Count > 0 )
+            {
+                Xoroshiro128Plus rng = new Xoroshiro128Plus(Run.instance.treasureRng.nextUlong);
+
+                itemIndex = rng.NextElementUniform(tieredItems);
+            }
+
+
+            return itemIndex;
         }
 
         private static void AddExtraItemPickupItem()
@@ -35,7 +102,7 @@ namespace LuckyItems.Items
             var ExtraItemPickupItemDef = new ItemDef
             {
                 name = "ExtraItemPickup",
-                tier = ItemTier.Tier2,
+                tier = ItemTier.Tier3,
                 pickupModelPath = LuckyItems.ModPrefix + "Assets/Items/OnPickupItem/pickup_item.prefab",
                 pickupIconPath = LuckyItems.ModPrefix + "Assets/Items/OnPickupItem/pickup_item_pic.png",
                 nameToken = "EXTRAITEMPICKUP_NAME",
@@ -51,9 +118,9 @@ namespace LuckyItems.Items
 
             ItemDisplayRule[] itemDisplayRules = new ItemDisplayRule[0];
 
-            var ExtraShrinePickup = new R2API.CustomItem(ExtraItemPickupItemDef, itemDisplayRules);
+            var ExtraItemPickup = new R2API.CustomItem(ExtraItemPickupItemDef, itemDisplayRules);
 
-            ExtraItemPickupItemIndex = ItemAPI.Add(ExtraShrinePickup); // ItemAPI sends back the ItemIndex of your itemf
+            ExtraItemPickupItemIndex = ItemAPI.Add(ExtraItemPickup); 
         }
 
 
@@ -61,8 +128,8 @@ namespace LuckyItems.Items
         {
             R2API.LanguageAPI.Add("EXTRAITEMPICKUP_NAME", "Lucky Default Cube");
             R2API.LanguageAPI.Add("EXTRAITEMPICKUP_PICKUP", "Chance on item pickup to increase the stack count of one of your items.");
-            R2API.LanguageAPI.Add("EXTRASHRINEROLL_DESC",
-                $"NO DESC",
+            R2API.LanguageAPI.Add("EXTRAITEMPICKUP_DESC",
+                $"Gain a %50 chance on item pickup to increase the stack count of one of your other items. <style=cStack>(Increases rarity of the item per stack)</style>.",
                 "This item has has a dark, secret past.");
         }
 
