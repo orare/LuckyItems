@@ -63,7 +63,7 @@ namespace LuckyItems.Items
             R2API.LanguageAPI.Add("EXTRASHRINEROLL_NAME", "Lucky Default Sphere");
             R2API.LanguageAPI.Add("EXTRASHRINEROLL_PICKUP", "Chance to gain an extra roll on shrine use.");
             R2API.LanguageAPI.Add("EXTRASHRINEROLL_DESC",
-                $"Shrines have a <style=cIsUtility>{ItemProcChance}%</style> <style=cStack>(+{ItemProcChance}% per stack)</style>chance to roll a second time at no additonal cost.");
+                $"Shrines have a <style=cIsUtility>{ItemProcChance}%</style> <style=cStack>(+{ItemProcChance}% per stack)</style> chance to roll a second time at no additonal cost.");
             R2API.LanguageAPI.Add("EXTRASHRINEROLL_LORE",
                 "This item has has a dark, secret past.");
         }

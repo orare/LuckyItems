@@ -17,9 +17,9 @@ namespace LuckyItems
     public class LuckyItems : BaseUnityPlugin
     {
         #if DEBUG
-            const string ModVersion = "1.0.0.2";
+            const string ModVersion = "1.1.0.0";
         #else
-            const string ModVersion = "1.0.0";
+            const string ModVersion = "1.1.0";
         #endif
         const string ModName = "Lucky Items";
         const string ModGuid = "mod.orare.luckyitems";

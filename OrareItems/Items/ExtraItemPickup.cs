@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using R2API;
 using R2API.Utils;
@@ -25,6 +24,40 @@ namespace LuckyItems.Items
             On.RoR2.UI.NotificationQueue.OnItemPickup += NotificationQueue_OnItemPickup;
         }
 
+        private static void AddExtraItemPickupItem()
+        {
+            var ExtraItemPickupItemDef = new ItemDef
+            {
+                name = "ExtraItemPickup",
+                tier = ItemTier.Tier3,
+                pickupModelPath = LuckyItems.ModPrefix + "Assets/Items/OnPickupItem/pickup_item.prefab",
+                pickupIconPath = LuckyItems.ModPrefix + "Assets/Items/OnPickupItem/pickup_item_pic.png",
+                nameToken = "EXTRAITEMPICKUP_NAME",
+                pickupToken = "EXTRAITEMPICKUP_PICKUP",
+                descriptionToken = "EXTRAITEMPICKUP_DESC",
+                loreToken = "EXTRAITEMPICKUP_LORE",
+                tags = new[]
+                {
+                    ItemTag.Utility,
+                    ItemTag.AIBlacklist
+                }
+            };
+
+            ItemDisplayRule[] itemDisplayRules = new ItemDisplayRule[0];
+
+            var ExtraItemPickup = new R2API.CustomItem(ExtraItemPickupItemDef, itemDisplayRules);
+
+            ExtraItemPickupItemIndex = ItemAPI.Add(ExtraItemPickup);
+        }
+
+        private static void AddLanguageTokens()
+        {
+            R2API.LanguageAPI.Add("EXTRAITEMPICKUP_NAME", "Lucky Default Cube");
+            R2API.LanguageAPI.Add("EXTRAITEMPICKUP_PICKUP", "Chance on item pickup to increase the stack count of one of your items.");
+            R2API.LanguageAPI.Add("EXTRAITEMPICKUP_DESC",
+                $"On item pickup there is a 50% chance to increase the stack count of one of your items. <style=cStack>(Stacks increase the chance to give higher tiered items)</style>.");
+            R2API.LanguageAPI.Add("EXTRAITEMPICKUP_LORE", "This item has has a dark, secret past.");
+        }
         private static void NotificationQueue_OnItemPickup(On.RoR2.UI.NotificationQueue.orig_OnItemPickup orig, RoR2.UI.NotificationQueue self, CharacterMaster characterMaster, ItemIndex itemIndex)
         {
             orig(self, characterMaster, itemIndex);
@@ -32,7 +65,7 @@ namespace LuckyItems.Items
             if(characterMaster && characterMaster.inventory)
             {
                 int itemCount = characterMaster.inventory.GetItemCount(ExtraItemPickupItemIndex);
-                if(itemCount > 0 && Util.CheckRoll(ItemProcChance , characterMaster))
+                if(itemCount > 0 && Util.CheckRoll(ItemProcChance, characterMaster))
                 {
                     itemTier = SelectItemTier(characterMaster.inventory);
                     if (itemTier == ItemTier.NoTier)
@@ -97,44 +130,6 @@ namespace LuckyItems.Items
             return itemIndex;
         }
 
-        private static void AddExtraItemPickupItem()
-        {
-            var ExtraItemPickupItemDef = new ItemDef
-            {
-                name = "ExtraItemPickup",
-                tier = ItemTier.Tier3,
-                pickupModelPath = LuckyItems.ModPrefix + "Assets/Items/OnPickupItem/pickup_item.prefab",
-                pickupIconPath = LuckyItems.ModPrefix + "Assets/Items/OnPickupItem/pickup_item_pic.png",
-                nameToken = "EXTRAITEMPICKUP_NAME",
-                pickupToken = "EXTRAITEMPICKUP_PICKUP",
-                descriptionToken = "EXTRAITEMPICKUP_DESC",
-                loreToken = "EXTRAITEMPICKUP_LORE",
-                tags = new[]
-                {
-                    ItemTag.Utility,
-                    ItemTag.AIBlacklist
-                }
-            };
-
-            ItemDisplayRule[] itemDisplayRules = new ItemDisplayRule[0];
-
-            var ExtraItemPickup = new R2API.CustomItem(ExtraItemPickupItemDef, itemDisplayRules);
-
-            ExtraItemPickupItemIndex = ItemAPI.Add(ExtraItemPickup); 
-        }
-
-
-        private static void AddLanguageTokens()
-        {
-            R2API.LanguageAPI.Add("EXTRAITEMPICKUP_NAME", "Lucky Default Cube");
-            R2API.LanguageAPI.Add("EXTRAITEMPICKUP_PICKUP", "Chance on item pickup to increase the stack count of one of your items.");
-            R2API.LanguageAPI.Add("EXTRAITEMPICKUP_DESC",
-                $"Gain a %50 chance on item pickup to increase the stack count of one of your other items. <style=cStack>(Increases rarity of the item per stack)</style>.",
-                "This item has has a dark, secret past.");
-        }
-
-
-
-
+      
     }
 }
